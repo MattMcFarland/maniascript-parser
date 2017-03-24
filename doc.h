@@ -1,4 +1,4 @@
-class Void {};
+class Void{};
 class Integer{};
 class Real{};
 class Boolean{};
