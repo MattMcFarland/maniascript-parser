@@ -1,16 +1,5 @@
 const chalk = require('chalk');
 
-const FALSE = { type: "bool", value: false };
-
-const PRECEDENCE = {
-    "=": 1,
-    "||": 2,
-    "&&": 3,
-    "<": 7, ">": 7, "<=": 7, ">=": 7, "==": 7, "!=": 7,
-    "+": 10, "-": 10,
-    "*": 20, "/": 20, "%": 20,
-};
-
 function parser(input) {
   return parse_toplevel();
   function is_punc(ch) {
@@ -81,25 +70,7 @@ function parser(input) {
       skip_punc(stop);
       return a;
   }
-  function typedDelimited(start, stop, separator, parser) {
-    const a = [];
-    let count = 0;
-    skip_punc(start);
-    while (!input.eof()) {
-      if (is_punc(stop)) break;
-      if (count === 0) {
-        // console.log('Identifier Argument:', chalk.green(input.peek().value) + ':' + chalk.yellow(input.peek().type))
-        count++
-      } else if (count === 1) {
-        skip_punc(separator);
-        // console.log('Variable Argument:', chalk.green(input.peek().value) + ':' + chalk.yellow(input.peek().type))
-      }
-      if (is_punc(stop)) break;
-      a.push(parser());
-    }
-    skip_punc(stop);
-    return a;
-  }
+
   function parse_toplevel() {
       var schema = [];
       while (!input.eof()) {
@@ -146,7 +117,10 @@ function parser(input) {
         var ident = parse_identifier()
         skip_punc("{")
         skip_punc("}")
-
+        return {
+          type: "class",
+          label: ident
+        }
         return ident;
       }
       if (is_punc("{")) return parse_schema();
@@ -253,11 +227,11 @@ function parser(input) {
     return param;
   }
   function parse_method(func) {
-    // console.log('->', func)
+    let funcBody = func ? func : input.peek()
+    let params = delimited("(", ")", ",", parse_parameters)
     return {
       type: "method",
-      func: func ? func : input.peek(),
-      params: delimited("(", ")", ",", parse_parameters)
+      body: Object.assign({}, { params }, funcBody)
     };
   }
   function parse_list() {
