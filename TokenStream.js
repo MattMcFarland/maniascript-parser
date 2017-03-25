@@ -1,8 +1,11 @@
-const getIdentifiers = require('./getIdentifiers')
-function TokenStream(input) {
+const assert = require('assert')
+
+function TokenStream(input, identifiers) {
+    assert(input, 'TokenStream argument for input missing')
+    assert(identifiers, 'TokenStream takes 2 arguments, identifiers (2nd) is missing')
     var current = null;
     var keywords = " const struct namespace public enum class ";
-    var identifiers = ' ' + getIdentifiers().join(' ') + ' ';
+    var identifiers = ' ' + identifiers + ' ';
 
     return {
         next  : next,
@@ -26,14 +29,16 @@ function TokenStream(input) {
         return is_id_start(ch) || "?!-<>=0123456789_".indexOf(ch) >= 0;
     }
     function is_op_char(ch) {
-        return "+-*/%=&|<>!:".indexOf(ch) >= 0;
+        return "+-*/%=&|<>!".indexOf(ch) >= 0;
     }
     function is_punc(ch) {
         return ",;(){}[]".indexOf(ch) >= 0;
     }
-  
     function is_whitespace(ch) {
-        return " \t\n".indexOf(ch) >= 0;
+        return " \t\n\r".indexOf(ch) >= 0;
+    }
+    function is_not_whitespace(ch) {
+        return " \t\n\r".indexOf(ch) === -1;
     }
     function read_while(predicate) {
         var str = "";
@@ -41,6 +46,7 @@ function TokenStream(input) {
             str += input.next();
         return str;
     }
+
     function read_number() {
         var has_dot = false;
         var number = read_while(function(ch){
@@ -81,8 +87,11 @@ function TokenStream(input) {
     function read_string() {
         return { type: "str", value: read_escaped('"') };
     }
+    function read_scope() {
+        return { type: "scope", value: read_while(is_not_whitespace) }
+    }
     function skip_comment() {
-        read_while(function(ch){ return ch != "\n" });
+        read_while(function(ch){ return ch != "\n" && ch != "\r" });
         input.next();
     }
     function read_next() {
@@ -104,6 +113,12 @@ function TokenStream(input) {
             type  : "op",
             value : read_while(is_op_char)
         };
+        if (ch == ':') {
+            input.next();
+            input.next();
+            return read_scope();
+        }
+
         input.croak("Can't handle character: " + ch);
     }
     function peek() {

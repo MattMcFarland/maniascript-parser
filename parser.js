@@ -133,7 +133,7 @@ function parser(input) {
   function parse_struct() {
       return {
           type: "struct",
-          vars: delimited("(", ")", "{", parse_schema),
+          vars: delimited("{", "}", ";", parse_schema),
           body: parse_expression()
       };
   }

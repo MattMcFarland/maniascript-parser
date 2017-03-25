@@ -1,6 +1,5 @@
-module.exports = function () {
-  const fs = require('fs')
-  const parseFile = fs.readFileSync('./doc.h', 'utf8')
+module.exports = function (parseFile) {
+  const fs = require('fs')  
   const scrubbed = parseFile.replace(/\/\*\![\s]*\*\//g, '').replace(/  /g, '')
   const statements = scrubbed.split('};')
   let current = 0

@@ -10,7 +10,7 @@ function InputStream(input) {
     };
     function next() {
         var ch = input.charAt(pos++);
-        if (ch == "\n") line++, col = 0; else col++;
+        if (ch == "\n" || ch == "\r") line++, col = 0; else col++;
         return ch;
     }
     function peek() {
