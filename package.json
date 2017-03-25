@@ -1,7 +1,7 @@
 {
-  "name": "mpdocs",
+  "name": "maniascript-parser",
   "version": "1.0.0",
-  "description": "Simple langauge parser, created by following this amazing guide: http://lisperator.net/pltut/",
+  "description": "Simple langauge parser, created by following this amazing guide: ",
   "main": "index.js",
   "dependencies": {
     "chalk": "^1.1.3",

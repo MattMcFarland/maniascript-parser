@@ -20,7 +20,7 @@ function InputStream(input) {
         return peek() == "";
     }
     function croak(msg) {
-        throw new Error(`${chalk.red('!')} ${msg} but saw ${(JSON.stringify(peek()))} - (${chalk.blue(line)}:${chalk.green(col)})\n`)
+        throw new Error(`${chalk.red('!')} ${msg} - (${chalk.blue(line)}:${chalk.green(col)})\n`)
     }
 }
 module.exports = InputStream

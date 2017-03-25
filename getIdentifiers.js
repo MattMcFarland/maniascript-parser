@@ -1,10 +1,10 @@
 module.exports = function (parseFile) {
-  const fs = require('fs')  
+  const fs = require('fs')
   const scrubbed = parseFile.replace(/\/\*\![\s]*\*\//g, '').replace(/  /g, '')
   const statements = scrubbed.split('};')
   let current = 0
   let things = [];
-  let identifiers = [];  
+  let identifiers = [];
   while (current < statements.length) {
     let statement = statements[current].trim()
     const thing = {}
@@ -23,24 +23,27 @@ module.exports = function (parseFile) {
       thing.label = labels[1].split('{}')[0]
       identifiers.push(thing.label.split('{')[0].trim())
     }
-    if (labels[0] === 'struct') {   
-      thing.type = 'Class'    
+    if (labels[0] === 'struct') {
+      thing.type = 'Class'
       thing.label = labels[1]
       identifiers.push(thing.label)
-      if (labels[2] === ':') {      
+      if (labels[2] === ':') {
         thing.extends = labels[4]
-      }    
+      }
     }
-    if (labels[0] === 'namespace') {   
-      thing.type = 'Class'    
+    if (labels[0] === 'namespace') {
+      thing.type = 'Class'
       thing.label = labels[1]
       identifiers.push(thing.label)
-      if (labels[2] === ':') {      
+      if (labels[2] === ':') {
         thing.extends = labels[4]
-      }    
-    }        
+      }
+    }
+    if (labels[0] === 'enum') {
+      identifiers.push(thing.label)
+    }
     current++;
-  }  
+  }
   return identifiers;
 }
 

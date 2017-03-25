@@ -26,13 +26,13 @@ function TokenStream(input, identifiers) {
         return /[a-zA-Z]|_/i.test(ch);
     }
     function is_id(ch) {
-        return is_id_start(ch) || "?!-<>=0123456789_".indexOf(ch) >= 0;
+        return is_id_start(ch) || "?!-<>=0123456[]789_".indexOf(ch) >= 0;
     }
     function is_op_char(ch) {
         return "+-*/%=&|<>!".indexOf(ch) >= 0;
     }
     function is_punc(ch) {
-        return ",;(){}[]".indexOf(ch) >= 0;
+        return ",;(){}:".indexOf(ch) >= 0;
     }
     function is_whitespace(ch) {
         return " \t\n\r".indexOf(ch) >= 0;
