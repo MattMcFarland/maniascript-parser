@@ -10,6 +10,7 @@ fs.readFile(path.join(__dirname, './doc.h'), 'utf8', (err, _data) => {
   if (err) throw err
   spinner.setSpinnerTitle('Parsing.... %s')
   const parser = require('../parser')
+  const transform = require('../transform')
   const InputStream = require('../InputStream')
   const TokenStream = require('../TokenStream')
   const getIdentifiers = require('../getIdentifiers')
@@ -30,6 +31,8 @@ fs.readFile(path.join(__dirname, './doc.h'), 'utf8', (err, _data) => {
     const ast = parser(TokenStream(input, identifiers))
     spinner.setSpinnerTitle(`ast.json... %s`)
     fs.writeFileSync(artifactPath + '/ast.json', JSON.stringify(ast, null, 2));
+    const completions = transform(ast)
+    fs.writeFileSync(artifactPath + '/completions.json', JSON.stringify(completions, null, 2));
     setTimeout(() => spinner.stop(), 1000)
   } catch (e) {
     console.log(e)
